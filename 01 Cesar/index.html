@@ -1,0 +1,269 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Cifrado Cesar</title>
+        <script src="./js/cesar.js"></script>
+    </head>
+    <link rel="stylesheet" href="./css/style.css">
+    <body>
+        <div class="main-container">
+            <div class="box1-b" id="box1">
+                <div class="container" id="container">
+                    <header>
+                      <h1>Cifrado César</h1>
+                      <span aria-hidden="true" class="copy copy-1">Cifrado César</span>
+                      <span aria-hidden="true" class="copy copy-2">Cifrado César</span>
+                      <span aria-hidden="true" class="copy copy-3">Cifrado César</span>
+                      <span aria-hidden="true" class="copy copy-4">Cifrado César</span>
+                    </header>
+                  </div>
+            </div>
+            
+            <div class="box2" id="box2">
+                <h2>Escribe un mensaje para cifrar 👀✏️</h2>
+                <br>
+                <form>
+                    <div class="user-box">
+                        <input type="number" placeholder=" " id="clave" required id="clave" minlength="1" maxlength="2" onsubmit="return validarC(event)" min="1" max="27">
+                        <label>Clave</label>
+                      </div>
+                      <div class="user-box">
+                        <div class="space">
+                            <textarea placeholder=" " id="msj" minlength="1" required id="msj" maxlength="300" onkeypress="return validarMSJ(event)"></textarea>
+                            <label>Mensaje</label>
+                        </div>
+                    </div>
+                    <div class="submit">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <input type="submit" id="a" value="Cifrar" onclick="return cifrar()">
+                    </div>
+                </form>
+            </div>
+
+            <div class="box4" id="box4">
+                <h2>Mensaje cifrado 🤫🔐</h2>
+                <br>
+                <p id="cifrado"></p>
+                <br>
+                <div class="submit">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <input type="submit" id="a" value="Descifrar" onclick="return descifrar()">
+                </div>
+            </div>
+
+            <div class="box1" id="box1">
+                <h2>Ey pero, ¿Qué es el cifrado César? 🧐🗝️</h2><br>
+                <p>
+                    El cifrado César, también conocido como cifrado por desplazamiento, 
+                    es uno de los métodos más simples de cifrado de sustitución. 
+                    Funciona tomando cada letra en un mensaje y desplazándola un número 
+                    fijo de posiciones hacia adelante o hacia atrás en el alfabeto. El 
+                    resultado es un mensaje cifrado en el que las letras originales se 
+                    reemplazan por otras letras del alfabeto.
+                    Para descifrar un mensaje cifrado con el cifrado César, se sigue el
+                    mismo proceso, pero en sentido contrario. Es decir, se toma el mensaje
+                    cifrado, se aplica un desplazamiento negativo (hacia atrás en el
+                    alfabeto) usando la misma clave y se obtiene el mensaje original.
+                </p>
+            </div>
+
+            <div class="main">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.js"></script>
+        </div>
+        <script>
+            const mouse = newV2();
+            const center = newV2();
+            const distanceFromCenter = newV2();
+            const distanceLerped = newV2();
+            let simulateMouseMovement = true;
+
+            const perspective = 500;
+            const translateZ = -22;
+            const rotate = 1;
+            const skew = 3;
+
+            const container = document.getElementById("container");
+            const copies = document.getElementsByClassName("copy");
+
+            function updateCenter() {
+            const rect = container.getBoundingClientRect();
+            center.x = rect.left + rect.width / 2;
+            center.y = rect.top + rect.height / 2;
+            }
+
+            function trackMousePosition(event) {
+            simulateMouseMovement = false;
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            distanceFromCenter.x = center.x - mouse.x;
+            distanceFromCenter.y = center.y - mouse.y;
+            }
+
+            function fakeMousePosition(t) {
+            distanceFromCenter.x = Math.sin(t / 500) * window.innerWidth * 0.5;
+            distanceFromCenter.y = Math.cos(t / 500) * window.innerWidth * 0.2;
+            }
+
+            function updateTextPosition(t) {
+            if (simulateMouseMovement) fakeMousePosition(t);
+
+            lerpV2(distanceLerped, distanceFromCenter);
+
+            for (var i = 1; i < copies.length + 1; i++) {
+                const copy = copies[i - 1];
+                copy.style.transform = makeTransformString(
+                i * distanceLerped.y * 0.05,
+                i * translateZ,
+                i * rotate * (distanceLerped.x * 0.003),
+                i * skew * (distanceLerped.x * 0.003)
+                );
+            }
+
+            requestAnimationFrame(updateTextPosition);
+            }
+
+            function makeTransformString(y, z, rotate, skew) {
+            return `perspective(${perspective}px) translate3d(0px, ${y}px, ${z}px) rotate(${rotate}deg) skew(${skew}deg)`;
+            }
+
+            function lerpV2(position, targetPosition) {
+            position.x += (targetPosition.x - position.x) * 0.2;
+            position.y += (targetPosition.y - position.y) * 0.2;
+            }
+
+            function newV2(x = 0, y = 0) {
+            return {
+                x: x,
+                y: y
+            };
+            }
+
+            updateCenter();
+            document.addEventListener("mousemove", trackMousePosition);
+            window.addEventListener("resize", updateCenter);
+            requestAnimationFrame(updateTextPosition);
+
+
+            let resizeReset = function() {
+        w = canvasBody.width = window.innerWidth;
+        h = canvasBody.height = window.innerHeight;
+        }
+
+        const opts = { 
+        particleColor: "rgb(158, 255, 242)",
+        lineColor: "rgb(158, 255, 242)",
+        particleAmount: 30,
+        defaultSpeed: 1,
+        variantSpeed: 1,
+        defaultRadius: 2,
+        variantRadius: 2,
+        linkRadius: 200,
+        };
+
+        window.addEventListener("resize", function(){
+        deBouncer();
+        });
+
+        let deBouncer = function() {
+            clearTimeout(tid);
+            tid = setTimeout(function() {
+                resizeReset();
+            }, delay);
+        };
+
+        let checkDistance = function(x1, y1, x2, y2){ 
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        };
+
+        let linkPoints = function(point1, hubs){ 
+        for (let i = 0; i < hubs.length; i++) {
+            let distance = checkDistance(point1.x, point1.y, hubs[i].x, hubs[i].y);
+            let opacity = 1 - distance / opts.linkRadius;
+            if (opacity > 0) { 
+            drawArea.lineWidth = 0.5;
+            drawArea.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+            drawArea.beginPath();
+            drawArea.moveTo(point1.x, point1.y);
+            drawArea.lineTo(hubs[i].x, hubs[i].y);
+            drawArea.closePath();
+            drawArea.stroke();
+            }
+        }
+        }
+
+        Particle = function(xPos, yPos){ 
+        this.x = Math.random() * w; 
+        this.y = Math.random() * h;
+        this.speed = opts.defaultSpeed + Math.random() * opts.variantSpeed; 
+        this.directionAngle = Math.floor(Math.random() * 360); 
+        this.color = opts.particleColor;
+        this.radius = opts.defaultRadius + Math.random() * opts. variantRadius; 
+        this.vector = {
+            x: Math.cos(this.directionAngle) * this.speed,
+            y: Math.sin(this.directionAngle) * this.speed
+        };
+        this.update = function(){ 
+            this.border(); 
+            this.x += this.vector.x; 
+            this.y += this.vector.y; 
+        };
+        this.border = function(){ 
+            if (this.x >= w || this.x <= 0) { 
+            this.vector.x *= -1;
+            }
+            if (this.y >= h || this.y <= 0) {
+            this.vector.y *= -1;
+            }
+            if (this.x > w) this.x = w;
+            if (this.y > h) this.y = h;
+            if (this.x < 0) this.x = 0;
+            if (this.y < 0) this.y = 0; 
+        };
+        this.draw = function(){ 
+            drawArea.beginPath();
+            drawArea.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+            drawArea.closePath();
+            drawArea.fillStyle = this.color;
+            drawArea.fill();
+        };
+        };
+
+        function setup(){ 
+        particles = [];
+        resizeReset();
+        for (let i = 0; i < opts.particleAmount; i++){
+            particles.push( new Particle() );
+        }
+        window.requestAnimationFrame(loop);
+        }
+
+        function loop(){ 
+        window.requestAnimationFrame(loop);
+        drawArea.clearRect(0,0,w,h);
+        for (let i = 0; i < particles.length; i++){
+            particles[i].update();
+            particles[i].draw();
+        }
+        for (let i = 0; i < particles.length; i++){
+            linkPoints(particles[i], particles);
+        }
+        }
+
+        const canvasBody = document.getElementById("canvas"),
+        drawArea = canvasBody.getContext("2d");
+        let delay = 200, tid,
+        rgb = opts.lineColor.match(/\d+/g);
+        resizeReset();
+        setup();
+        </script>
+    </body>
+</html>

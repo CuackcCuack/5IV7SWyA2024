@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado Viggenere</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!--
+    <header>
+        <h1>Cifrado Viggenere</h1>
+    </header>
+    -->
+
+    <div class="main-container">
+        <div class="box1-b" id="box1">
+            <div class="container" id="container">
+                <header>
+                  <h1>Cifrado Viggenere</h1>
+                  <span aria-hidden="true" class="copy copy-1">Cifrado Viggenere</span>
+                  <span aria-hidden="true" class="copy copy-2">Cifrado Viggenere</span>
+                  <span aria-hidden="true" class="copy copy-3">Cifrado Viggenere</span>
+                  <span aria-hidden="true" class="copy copy-4">Cifrado Viggenere</span>
+                </header>
+              </div>
+        </div>
+
+        <div class="box2" id="box2">
+            <h2>Escribe un mensaje para cifrar 👀✏️</h2>
+            <br>
+                <div class="user-box">
+                    <input type="text" placeholder=" " id="txtClave" required id="txtClave" minlength="1" onkeypress="return validarMSJ(event)">
+                    <label>Clave</label>
+                  </div>
+                  <div class="user-box">
+                    <div class="space">
+                        <input type="text" placeholder=" " id="txt" minlength="1" required id="txt" maxlength="300" onkeypress="return validarMSJ(event)"></input>
+                        <label>Mensaje</label>
+                    </div>
+                </div>
+                <div class="submit">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <input type="button" id="a" class="btn btn-info" value="Cifrar" onclick="longitudCifrar()">
+                    <input type="button" id="a" class="btn btn-info" value="Descifrar" onclick="longitudDescifrar()">
+                    <input type="button" id="a" class="btn btn-info" value="Reiniciar" onclick="reiniciar()">
+                </div>
+        </div>
+
+        <div class="box4" id="box4">
+            <h2>Mensaje cifrado 🤫🔐</h2>
+            <br><textarea id="res" onpaste="return false;" ondrop="return false;" onmousedown="return false;"></textarea><br>
+
+            <div class="submit">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <input type="button" id="a" class="btn btn-info" value="Copiar" onclick="colocar()">
+            </div>
+        </div>
+
+        <div class="box1" id="box1">
+            <h2>Ey pero, ¿Qué es el cifrado Viggenere? 🧐🗝️</h2><br>
+            <p>
+                El cifrado César, también conocido como cifrado por desplazamiento, 
+                es uno de los métodos más simples de cifrado de sustitución. 
+                Funciona tomando cada letra en un mensaje y desplazándola un número 
+                fijo de posiciones hacia adelante o hacia atrás en el alfabeto. El 
+                resultado es un mensaje cifrado en el que las letras originales se 
+                reemplazan por otras letras del alfabeto.
+                Para descifrar un mensaje cifrado con el cifrado César, se sigue el
+                mismo proceso, pero en sentido contrario. Es decir, se toma el mensaje
+                cifrado, se aplica un desplazamiento negativo (hacia atrás en el
+                alfabeto) usando la misma clave y se obtiene el mensaje original.
+            </p>
+        </div>
+    </div>
+    <script src="./js/viggenere.js"></script>
+
+    <div class="main">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        const mouse = newV2();
+        const center = newV2();
+        const distanceFromCenter = newV2();
+        const distanceLerped = newV2();
+        let simulateMouseMovement = true;
+
+        const perspective = 500;
+        const translateZ = -22;
+        const rotate = 1;
+        const skew = 3;
+
+        const container = document.getElementById("container");
+        const copies = document.getElementsByClassName("copy");
+
+        function updateCenter() {
+        const rect = container.getBoundingClientRect();
+        center.x = rect.left + rect.width / 2;
+        center.y = rect.top + rect.height / 2;
+        }
+
+        function trackMousePosition(event) {
+        simulateMouseMovement = false;
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+        distanceFromCenter.x = center.x - mouse.x;
+        distanceFromCenter.y = center.y - mouse.y;
+        }
+
+        function fakeMousePosition(t) {
+        distanceFromCenter.x = Math.sin(t / 500) * window.innerWidth * 0.5;
+        distanceFromCenter.y = Math.cos(t / 500) * window.innerWidth * 0.2;
+        }
+
+        function updateTextPosition(t) {
+        if (simulateMouseMovement) fakeMousePosition(t);
+
+        lerpV2(distanceLerped, distanceFromCenter);
+
+        for (var i = 1; i < copies.length + 1; i++) {
+            const copy = copies[i - 1];
+            copy.style.transform = makeTransformString(
+            i * distanceLerped.y * 0.05,
+            i * translateZ,
+            i * rotate * (distanceLerped.x * 0.003),
+            i * skew * (distanceLerped.x * 0.003)
+            );
+        }
+
+        requestAnimationFrame(updateTextPosition);
+        }
+
+        function makeTransformString(y, z, rotate, skew) {
+        return `perspective(${perspective}px) translate3d(0px, ${y}px, ${z}px) rotate(${rotate}deg) skew(${skew}deg)`;
+        }
+
+        function lerpV2(position, targetPosition) {
+        position.x += (targetPosition.x - position.x) * 0.2;
+        position.y += (targetPosition.y - position.y) * 0.2;
+        }
+
+        function newV2(x = 0, y = 0) {
+        return {
+            x: x,
+            y: y
+        };
+        }
+
+        updateCenter();
+        document.addEventListener("mousemove", trackMousePosition);
+        window.addEventListener("resize", updateCenter);
+        requestAnimationFrame(updateTextPosition);
+
+
+        let resizeReset = function() {
+    w = canvasBody.width = window.innerWidth;
+    h = canvasBody.height = window.innerHeight;
+    }
+
+    const opts = { 
+    particleColor: "rgb(158, 255, 242)",
+    lineColor: "rgb(158, 255, 242)",
+    particleAmount: 30,
+    defaultSpeed: 1,
+    variantSpeed: 1,
+    defaultRadius: 2,
+    variantRadius: 2,
+    linkRadius: 200,
+    };
+
+    window.addEventListener("resize", function(){
+    deBouncer();
+    });
+
+    let deBouncer = function() {
+        clearTimeout(tid);
+        tid = setTimeout(function() {
+            resizeReset();
+        }, delay);
+    };
+
+    let checkDistance = function(x1, y1, x2, y2){ 
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    };
+
+    let linkPoints = function(point1, hubs){ 
+    for (let i = 0; i < hubs.length; i++) {
+        let distance = checkDistance(point1.x, point1.y, hubs[i].x, hubs[i].y);
+        let opacity = 1 - distance / opts.linkRadius;
+        if (opacity > 0) { 
+        drawArea.lineWidth = 0.5;
+        drawArea.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+        drawArea.beginPath();
+        drawArea.moveTo(point1.x, point1.y);
+        drawArea.lineTo(hubs[i].x, hubs[i].y);
+        drawArea.closePath();
+        drawArea.stroke();
+        }
+    }
+    }
+
+    Particle = function(xPos, yPos){ 
+    this.x = Math.random() * w; 
+    this.y = Math.random() * h;
+    this.speed = opts.defaultSpeed + Math.random() * opts.variantSpeed; 
+    this.directionAngle = Math.floor(Math.random() * 360); 
+    this.color = opts.particleColor;
+    this.radius = opts.defaultRadius + Math.random() * opts. variantRadius; 
+    this.vector = {
+        x: Math.cos(this.directionAngle) * this.speed,
+        y: Math.sin(this.directionAngle) * this.speed
+    };
+    this.update = function(){ 
+        this.border(); 
+        this.x += this.vector.x; 
+        this.y += this.vector.y; 
+    };
+    this.border = function(){ 
+        if (this.x >= w || this.x <= 0) { 
+        this.vector.x *= -1;
+        }
+        if (this.y >= h || this.y <= 0) {
+        this.vector.y *= -1;
+        }
+        if (this.x > w) this.x = w;
+        if (this.y > h) this.y = h;
+        if (this.x < 0) this.x = 0;
+        if (this.y < 0) this.y = 0; 
+    };
+    this.draw = function(){ 
+        drawArea.beginPath();
+        drawArea.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        drawArea.closePath();
+        drawArea.fillStyle = this.color;
+        drawArea.fill();
+    };
+    };
+
+    function setup(){ 
+    particles = [];
+    resizeReset();
+    for (let i = 0; i < opts.particleAmount; i++){
+        particles.push( new Particle() );
+    }
+    window.requestAnimationFrame(loop);
+    }
+
+    function loop(){ 
+    window.requestAnimationFrame(loop);
+    drawArea.clearRect(0,0,w,h);
+    for (let i = 0; i < particles.length; i++){
+        particles[i].update();
+        particles[i].draw();
+    }
+    for (let i = 0; i < particles.length; i++){
+        linkPoints(particles[i], particles);
+    }
+    }
+
+    const canvasBody = document.getElementById("canvas"),
+    drawArea = canvasBody.getContext("2d");
+    let delay = 200, tid,
+    rgb = opts.lineColor.match(/\d+/g);
+    resizeReset();
+    setup();
+    </script>
+</body>
+</html>
