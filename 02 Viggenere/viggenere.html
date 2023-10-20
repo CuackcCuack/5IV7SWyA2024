@@ -66,16 +66,11 @@
         <div class="box1" id="box1">
             <h2>Ey pero, ¿Qué es el cifrado Viggenere? 🧐🗝️</h2><br>
             <p>
-                El cifrado César, también conocido como cifrado por desplazamiento, 
-                es uno de los métodos más simples de cifrado de sustitución. 
-                Funciona tomando cada letra en un mensaje y desplazándola un número 
-                fijo de posiciones hacia adelante o hacia atrás en el alfabeto. El 
-                resultado es un mensaje cifrado en el que las letras originales se 
-                reemplazan por otras letras del alfabeto.
-                Para descifrar un mensaje cifrado con el cifrado César, se sigue el
-                mismo proceso, pero en sentido contrario. Es decir, se toma el mensaje
-                cifrado, se aplica un desplazamiento negativo (hacia atrás en el
-                alfabeto) usando la misma clave y se obtiene el mensaje original.
+                El cifrado Vigenère es un método de cifrado polialfabético que utiliza una clave para cambiar el desplazamiento de las letras en un mensaje. A diferencia de los cifrados simples, como el cifrado César, donde todas las letras se desplazan por la misma cantidad, en el cifrado Vigenère, el desplazamiento varía según la posición de cada letra en la clave.
+
+La clave, generalmente una palabra o frase corta, se repite a lo largo del mensaje. Cada letra de la clave determina cuántos lugares se desplazará la letra correspondiente del mensaje original. Esto hace que el cifrado Vigenère sea más resistente que los cifrados simples, ya que la misma letra en el mensaje original puede cifrarse de diferentes maneras según su posición en la clave.
+Para descifrar un mensaje cifrado con Vigenère, se necesita la misma clave utilizada para cifrarlo. Cada letra del mensaje cifrado se desplaza en sentido contrario a la clave para recuperar el mensaje original.
+El cifrado Vigenère es un ejemplo histórico de un cifrado polialfabético y ha sido un punto de partida para el desarrollo de cifrados más avanzados en la criptografía. Aunque es más seguro que los cifrados simples, todavía es vulnerable al criptoanálisis, especialmente si la clave es corta o predecible.
             </p>
         </div>
     </div>
